@@ -1,0 +1,8 @@
+# 생성물. build_site.py 가 만들고 GitHub Actions 가 Pages 로 배포한다.
+_site/
+
+# build_jsonld.py 의 단독 산출물 (사이트에는 _site/data/ 로 따로 들어간다)
+data/jsonld/
+
+__pycache__/
+*.pyc

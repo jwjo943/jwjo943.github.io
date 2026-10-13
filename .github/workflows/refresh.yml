@@ -1,0 +1,88 @@
+name: Refresh disclosure data and deploy
+
+# 한화생명 상품공시실을 재수집해 사이트를 다시 만들고 Pages 로 배포한다.
+# 공시는 수시로 바뀌므로(상품 추가/판매중지/약관 개정) 기준일이 고정된 사이트는
+# 보는 쪽을 틀린 결론으로 유도한다. 그래서 주 1회 자동 갱신한다.
+#
+# 배포 방식은 Actions 아티팩트다. 레포에는 소스만 두고 생성물(_site)은 커밋하지
+# 않으므로, 빌드 스크립트가 공개 URL 로 서빙되지 않는다.
+
+on:
+  schedule:
+    # 매주 월요일 03:00 KST (일요일 18:00 UTC)
+    - cron: "0 18 * * 0"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/**"
+      - "site.config.json"
+      - "static/**"
+      - ".github/workflows/refresh.yml"
+
+permissions:
+  contents: write   # 갱신된 data/products.json 커밋
+  pages: write
+  id-token: write
+
+# 동시 배포 금지. 진행 중인 배포를 취소하지 않는다 (사이트가 반쯤 올라간 상태 방지).
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch disclosure data
+        id: fetch
+        # 공시실이 죽어 있으면 수집이 실패한다. 그 경우 커밋된 직전 데이터로
+        # 빌드를 계속해 사이트를 내리지 않는다.
+        run: |
+          if python scripts/fetch_products.py; then
+            echo "fetched=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::수집 실패. 커밋된 data/products.json 으로 빌드를 계속한다."
+            echo "fetched=false" >> "$GITHUB_OUTPUT"
+            git checkout -- data/products.json
+          fi
+
+      - name: Show data diff
+        run: python scripts/diff_products.py
+
+      - name: Build site
+        run: python scripts/build_site.py --clean --out _site
+
+      - name: Commit refreshed data
+        run: |
+          if git diff --quiet -- data/products.json; then
+            echo "커밋할 변경 없음"
+          else
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/products.json
+            git commit -m "Refresh disclosure data ($(date -u +%Y-%m-%d))"
+            git push
+          fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
+
+      - name: Submit to IndexNow
+        # 배포 성공 후에만. 키 파일이 라이브여야 제출이 통과한다.
+        run: python scripts/submit_indexnow.py
