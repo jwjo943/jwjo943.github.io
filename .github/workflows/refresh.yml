@@ -75,6 +75,11 @@ jobs:
           fi
 
       - uses: actions/configure-pages@v5
+        # enablement: Pages 가 꺼져 있으면 켜고, build_type 을 legacy -> workflow 로
+        # 전환한다. 레포 소유자의 gh OAuth 토큰으로는 이 API 가 404 라, 워크플로의
+        # GITHUB_TOKEN(pages: write)으로 처리한다.
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
