@@ -65,15 +65,40 @@ jobs:
       - name: Build site
         run: python scripts/build_site.py --clean --out _site
 
-      - name: Commit refreshed data
+      - name: Sync built site into repo root
+        # Pages 가 legacy 모드인 동안은 모든 푸시에 레포 루트가 빌드되어 배포된다.
+        # 루트에 생성물이 없으면 legacy 가 빈 사이트를 올려 전체 404 가 된다
+        # (2026-10-13 커밋 87c4193 에서 실제 발생). 루트에도 같은 산출물을 두어
+        # legacy 와 Actions 어느 쪽이 이겨도 올바른 사이트가 나오게 한다.
+        # --delete 로 사라진 상품의 낡은 페이지도 정리한다. 소스는 제외.
         run: |
-          if git diff --quiet -- data/products.json; then
+          rsync -a --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude '.gitignore' \
+            --exclude '_site/' \
+            --exclude 'scripts/' \
+            --exclude 'static/' \
+            --exclude 'build.bat' \
+            --exclude 'site.config.json' \
+            --exclude 'NEXT.md' \
+            --exclude 'data/products.json' \
+            --exclude 'data/jsonld/' \
+            _site/ ./
+          git status --short | head -20
+          echo "변경 파일 수: $(git status --porcelain | wc -l)"
+
+      - name: Commit refreshed data and site
+        run: |
+          if git diff --quiet && [ -z "$(git status --porcelain)" ]; then
             echo "커밋할 변경 없음"
           else
             git config user.name  "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add data/products.json
-            git commit -m "Refresh disclosure data ($(date -u +%Y-%m-%d))"
+            git add -A
+            # [skip ci]: 이 커밋이 다시 이 워크플로를 트리거하면 무한 루프가 된다.
+            # Actions 만 건너뛰고 Pages 의 legacy 빌드는 그대로 돌아 사이트를 올린다.
+            git commit -m "Refresh disclosure data and rebuild site ($(date -u +%Y-%m-%d)) [skip ci]"
             git push
           fi
 

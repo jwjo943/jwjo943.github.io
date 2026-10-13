@@ -1,0 +1,845 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://jwjo943.github.io/#publisher",
+      "name": "한화생명",
+      "legalName": "한화생명보험 주식회사",
+      "url": "https://www.hanwhalife.com/",
+      "identifier": {
+        "@type": "PropertyValue",
+        "propertyID": "사업자등록번호",
+        "value": "116-81-11757"
+      }
+    },
+    {
+      "@type": "Dataset",
+      "@id": "https://jwjo943.github.io/#dataset",
+      "name": "한화생명 판매중 보험상품 공시 목록",
+      "description": "한화생명 상품공시실 상품목록에서 수집한 판매중 보험상품 101건(특약 31건 포함). 각 상품의 분류, 판매기간 이력 793구간, 공시문서 2141건의 목록을 담는다. 보험료·보장금액·해지환급률은 공시실 JSON 에 제공되지 않아 포함하지 않는다 (해당 수치는 상품요약서 PDF 안에만 있다).",
+      "inLanguage": "ko",
+      "dateModified": "2026-10-13",
+      "isBasedOn": "https://www.hanwhalife.com/main/disclosure/goods/disclosurenotice/DF_GDDN000_P10000.do?MENU_ID1=DF_GDGL000&MENU_ID2=DF_GDGL000_P10000",
+      "about": {
+        "@id": "https://jwjo943.github.io/#publisher"
+      },
+      "creator": {
+        "@id": "https://jwjo943.github.io/#publisher"
+      },
+      "url": "https://jwjo943.github.io/"
+    },
+    {
+      "@type": "FinancialProduct",
+      "@id": "https://jwjo943.github.io/products/1373/",
+      "name": "한화생명 연금저축 스마트하이드림연금보험",
+      "category": "방카 슈랑스 > 연금 > 주보험",
+      "serviceType": "연금",
+      "disambiguatingDescription": "주보험 — 판매채널 방카 슈랑스, 상품종류 연금.",
+      "provider": {
+        "@id": "https://jwjo943.github.io/#publisher"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "대한민국"
+      },
+      "identifier": {
+        "@type": "PropertyValue",
+        "propertyID": "hanwhalife:goodsIndex",
+        "value": "1373"
+      },
+      "sameAs": "https://www.hanwhalife.com/main/disclosure/goods/disclosurenotice/DF_GDDN000_P10000.do?MENU_ID1=DF_GDGL000&MENU_ID2=DF_GDGL000_P10000&schText=%ED%95%9C%ED%99%94%EC%83%9D%EB%AA%85+%EC%97%B0%EA%B8%88%EC%A0%80%EC%B6%95+%EC%8A%A4%EB%A7%88%ED%8A%B8%ED%95%98%EC%9D%B4%EB%93%9C%EB%A6%BC%EC%97%B0%EA%B8%88%EB%B3%B4%ED%97%98",
+      "offers": [
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/InStock",
+          "availabilityStarts": "2026-04-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "상품요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_상품요약서_20260401_1.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_사업방법서_20260401.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_약관_20260401_1.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_주요내용요약서_20260401.pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2026-01-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2026-03-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_사업방법서_20260101_1.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_약관_20260101_1.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_주요내용요약서_20260101_1.pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2025-09-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2025-12-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-136_사업방법서_20250901~          .pdf.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-136_약관_20250901~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-136_주요내용요약서_20250901~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2025-04-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2025-08-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-136_사업방법서_20250401~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-136_약관_20250401~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-136_주요내용요약서_20250401~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2024-04-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2025-03-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-136_사업방법서_20240401~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-136_약관_20240401~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-136_주요내용요약서_20240401~          .pdf.pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2024-01-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2024-03-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-135_사업방법서_20240101~          _1.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-135_약관_20240101~          _2.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-135_주요내용요약서_20240101~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2023-04-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2023-12-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "_1228-134_사업방법서_20230401~.pdf.pdf.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "_1228-134_약관_20230401~.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-134_주요내용요약서_20230401~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2023-01-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2023-03-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-134_사업방법서_20230101~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-134_약관_20230101~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-134_주요내용요약서_20230101~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2022-04-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2022-12-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "_1228-132_사업방법서_20220401~.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "_1228-132_약관_20220401~.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-132_주요내용요약서_20220401~          .pdf.pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2021-08-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2022-03-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "_1228-132_사업방법서_20210801~.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "_1228-132_약관_20210801~.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-132_주요내용요약서_20210801~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2021-07-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2021-07-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "_1228-132_사업방법서_20210701~.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "_1228-132_약관_20210701~.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-132_주요내용요약서_20210701~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2021-05-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2021-06-30",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "_1228-132_사업방법서_20210501~.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "_1228-132_약관_20210501~.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-132_주요내용요약서_20210501~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2021-03-25",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2021-04-30",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-132_사업방법서_20210325~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-132_약관_20210325~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-132_주요내용요약서_20210325~          .pdf.pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2021-01-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2021-03-24",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "_1228-132_사업방법서_20210101~.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "_1228-132_약관_20210101~.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-132_주요내용요약서_20210101~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2020-04-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2020-12-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-130_사업방법서_20200401~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-130_약관_20200401~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-130_주요내용요약서_20200401~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2020-01-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2020-03-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-128_사업방법서_20200101~          _2.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-128_약관_20200101~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-128_주요내용요약서_20200101~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2019-03-30",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2019-12-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-128_사업방법서_20190330~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-128_약관_20190330~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-128_주요내용요약서_20190330~20191231.pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2019-01-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2019-03-29",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-126_사업방법서_20190101~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-126_약관_20190101~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-126_주요내용요약서_20190101~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2018-09-29",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2018-12-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-126_사업방법서_20180929~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-126_약관_20180929~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-126_주요내용요약서_20180929~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2018-04-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2018-09-28",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-126_사업방법서_20180401~          _1.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-126_약관_20180401~          .pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-126_주요내용요약서_20180401~          .pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2018-01-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2018-03-30",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-126_사업방법서_20180101~20180330.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-126_약관_20180101~20180330.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-126_주요내용요약서_20180101~20180330.pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2017-04-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2017-12-29",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-124_사업방법서_20170401~20171229.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-124_약관_20170401~20171229.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-124_주요내용요약서_20170401~20171229.pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2017-01-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2017-03-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-124_사업방법서_20170101~20170331.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-124_약관_20170101~20170331.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-124_주요내용요약서_20170101~20170331.pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2016-04-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2016-12-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-121_사업방법서_20160401~20161231.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-121_약관_20160401~20161231.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-121_주요내용요약서_20160401~20161231.pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2016-01-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2016-04-01",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-119_사업방법서_20160101~20160401.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-119_약관_20160101~20160401.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-119_주요내용요약서_20160101~20160401.pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2015-07-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2015-12-31",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-117_사업방법서_20150701~20151231.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-117_약관_20150701~20151231.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-117_주요내용요약서_20150701~20151231.pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        },
+        {
+          "@type": "Offer",
+          "availability": "https://schema.org/Discontinued",
+          "availabilityStarts": "2015-04-01",
+          "seller": {
+            "@id": "https://jwjo943.github.io/#publisher"
+          },
+          "availabilityEnds": "2015-06-30",
+          "subjectOf": [
+            {
+              "@type": "DigitalDocument",
+              "name": "사업방법서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-117_사업방법서_20150401~20150630.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "약관",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-117_약관_20150401~20150630.pdf",
+              "encodingFormat": "application/pdf"
+            },
+            {
+              "@type": "DigitalDocument",
+              "name": "주요내용요약서",
+              "alternateName": "한화생명 연금저축 스마트하이드림연금보험_1228-117_주요내용요약서_20150401~20150630.pdf",
+              "encodingFormat": "application/pdf"
+            }
+          ]
+        }
+      ],
+      "url": "https://jwjo943.github.io/products/1373/"
+    }
+  ]
+}

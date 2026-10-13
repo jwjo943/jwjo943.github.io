@@ -82,6 +82,17 @@ AI_CRAWLERS: list[tuple[str, str]] = [
 #: 학습용 수집 봇. allowTrainingCrawlers=false 면 이 토큰만 Disallow 로 뒤집는다.
 TRAINING_CRAWLERS = {"ClaudeBot", "GPTBot", "Google-Extended"}
 
+#: 레포 루트에 함께 올라가는 빌드 소스. 콘텐츠가 아니므로 robots.txt 에서 뺀다.
+#: (Pages 가 legacy 모드로 레포 루트를 서빙할 때만 실제로 노출된다.)
+SOURCE_PATHS = (
+    "scripts/",
+    "static/",
+    "data/products.json",
+    "site.config.json",
+    "build.bat",
+    "NEXT.md",
+)
+
 DISCLAIMER = (
     "이 사이트는 한화생명보험 주식회사가 운영하는 공식 사이트가 아니며, "
     "한화생명 상품공시실에 공시된 내용을 색인한 비공식 자료다. "
@@ -386,6 +397,11 @@ def build_robots(cfg: dict) -> str:
         "",
         "User-agent: *",
         "Allow: /",
+        "",
+        "# 생성물을 레포 루트에 함께 커밋하므로 빌드 소스도 같은 호스트에서 서빙된다.",
+        "# 콘텐츠가 아니니 크롤 대상에서 뺀다. (같은 User-agent 그룹 안에 둔다 -",
+        "#  그룹을 쪼개면 어느 규칙이 적용되는지 모호해진다.)",
+        *(f"Disallow: /{path}" for path in SOURCE_PATHS),
         "",
     ]
     for token, note in AI_CRAWLERS:

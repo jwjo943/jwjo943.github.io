@@ -2,36 +2,38 @@
 
 이 레포가 소스 정본이다. 사이트: https://jwjo943.github.io/
 
-## 0. 경고 — 지금은 `main` 에 푸시하면 사이트가 죽는다
+## 0. 2026-10-13 마지막에 일어난 일 (해결됨)
 
-Pages 가 아직 legacy 모드라서 **모든 푸시에 legacy 빌드가 돈다.** 레포 루트에는 사이트 파일이
-없으므로 legacy 가 Actions 배포보다 나중에 끝나면 전체가 404 가 된다. 2026-10-13 커밋
-`87c4193` 에서 실제로 발생했다 (legacy 14:57:53 완료 → `/` 404, `/NEXT.md` 200).
+Pages 가 legacy 모드라 **모든 푸시에 legacy 빌드가 돈다.** 소스/산출물을 분리하면서 레포 루트를
+비웠더니 legacy 가 Actions 배포보다 나중에 끝나는 푸시에서 **사이트 전체가 404** 가 됐다
+(커밋 `87c4193`, `cb743c3`). `/NEXT.md` 와 `/scripts/build_site.py` 만 200 이었다.
 
-**§1 을 먼저 하고 그 다음에 푸시해라.**
+복구 수단이 둘 다 막혀 있었다 — 레포 소유자의 gh OAuth 토큰으로는:
 
-사이트가 404 면 복구 방법:
+| 시도 | 결과 |
+|---|---|
+| `PUT /repos/{o}/{r}/pages` (build_type 전환) | **404** |
+| `gh workflow run refresh.yml` (푸시 없이 재배포) | **403 Must have admin rights** |
 
-```
-gh workflow run refresh.yml
-```
+그래서 **생성물을 레포 루트에도 커밋**하는 방식으로 전환했다. legacy 와 Actions 어느 쪽이
+이겨도 올바른 사이트가 나오므로 경쟁이 무해해진다. 지금은 푸시해도 안전하다.
 
-(푸시 없이 Actions 배포만 다시 돌리므로 legacy 가 끼어들지 않는다.)
+- 워크플로가 `_site` 로 빌드한 뒤 `rsync -a --delete` 로 루트에 반영한다 (소스는 제외).
+  `--delete` 때문에 사라진 상품의 낡은 페이지도 정리된다.
+- 봇 커밋 메시지에 `[skip ci]` 를 붙여 자기 재트리거(무한 루프)를 막는다. legacy 빌드는
+  Actions 가 아니라서 그대로 돌아 사이트를 올린다.
+- 루트에 올라간 빌드 소스는 `robots.txt` 의 `Disallow` 로 크롤에서 뺀다.
 
-## 1. 최우선 — 배포 경로가 이중이라 사이트가 깨진다
+## 1. 선택 — 원래 구조(소스/산출물 분리)로 되돌리려면
 
-`build_type` 이 `legacy` 로 남아 있다. `actions/configure-pages@v5` 의 `enablement: true` 로는
-전환되지 않았다. 커밋 `a4e1609` 에서 legacy 빌드와 Actions 아티팩트 배포가 **둘 다** 실행됐다.
+지금은 생성물이 레포 루트에 함께 커밋되어 있어 안전하다. 대가는 두 가지다 — 빌드 소스가
+공개 URL 로 서빙되고(크롤은 `robots.txt` `Disallow` 로 차단), 갱신마다 200여 파일이 커밋된다.
+깔끔하게 하려면 Pages 를 Actions 단독 배포로 바꾸면 된다. **급하지 않다.**
 
-| 시각 | 경로 | 결과 |
-|---|---|---|
-| 14:46:06 | legacy (레포 루트에서 빌드) | built |
-| 14:46:32 | Actions 아티팩트 | success |
+`build_type` 이 `legacy` 로 남아 있고 `actions/configure-pages@v5` 의 `enablement: true` 로는
+전환되지 않았다.
 
-지금은 Actions 가 나중에 끝나 이겼다. 레포 루트에는 사이트 파일이 없으므로 **legacy 가 나중에
-끝나는 푸시에서는 전체 404 가 된다.**
-
-### 조치 (사람이 해야 함)
+### 조치 (사람이 해야 함 — CLI 로는 404/403)
 
 ```
 https://github.com/jwjo943/jwjo943.github.io/settings/pages
@@ -49,12 +51,10 @@ gh workflow run refresh.yml                                          # 재배포
 curl -sI https://jwjo943.github.io/ | head -1                        # 200 확인
 ```
 
-전환이 안 되면(또는 미루려면) 대안은 **생성물을 레포 루트에 다시 커밋**하는 것이다.
-그러면 legacy 가 이겨도 올바른 사이트를 서빙하므로 경쟁 자체가 무해해진다.
-빌드 스크립트가 공개 URL 로 노출되는 것이 비용이고, `robots.txt` 에 `Disallow: /scripts/`
-를 넣어 크롤만 막으면 된다. 이 경우 `build_site.py --clean` 은 레포 루트에 쓰지 못하도록
-안전장치가 걸려 있으니, `_site` 로 빌드한 뒤 루트로 복사(`rsync --delete` + 소스 제외)해야
-사라진 상품의 낡은 페이지가 남지 않는다.
+전환했다면 워크플로의 `Sync built site into repo root` 단계와 루트의 생성물을 지워도 된다
+(그때는 `robots.txt` 의 `Disallow` 와 `SOURCE_PATHS` 도 같이 정리).
+`build_site.py --clean` 은 `.git`/`.github`/`scripts`/`site.config.json` 이 있는 디렉터리를
+지우려 하면 거부하므로, 루트에 직접 `--clean` 을 걸 수는 없다.
 
 ## 2. 다른 PC 준비
 
