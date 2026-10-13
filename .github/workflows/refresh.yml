@@ -14,11 +14,14 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - "scripts/**"
-      - "site.config.json"
-      - "static/**"
-      - ".github/workflows/refresh.yml"
+    # paths 화이트리스트가 아니라 paths-ignore 를 쓴다. Pages 의 legacy 빌드는
+    # 필터와 무관하게 모든 푸시에 돌기 때문에, 이 워크플로가 걸러져 돌지 않으면
+    # legacy 가 단독으로 레포 루트(사이트 파일 없음)를 배포해 전체 404 가 된다.
+    # data/products.json 만 바뀐 푸시는 이 워크플로의 자체 커밋이므로 제외한다
+    # (제외하지 않으면 무한 재실행).
+    # 문서만 바뀐 푸시도 제외하면 안 된다 — legacy 가 단독 실행되어 사이트가 죽는다.
+    paths-ignore:
+      - "data/**"
 
 permissions:
   contents: write   # 갱신된 data/products.json 커밋
