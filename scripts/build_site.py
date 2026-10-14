@@ -1,9 +1,8 @@
 """GitHub Pages 에 올릴 정적 사이트 생성기.
 
 사용:
-    py scripts/build_site.py                      # site.config.json 의 baseUrl 사용
+    py scripts/build_site.py --clean              # _site/ 로 빌드 (baseUrl 은 site.config.json)
     py scripts/build_site.py --base-url https://myaccount.github.io
-    py scripts/build_site.py --out ../myaccount.github.io   # Pages 레포로 직접 빌드
 
 출력(퍼블리시 루트):
     index.html                    상품 101건 색인
@@ -15,8 +14,10 @@
 
 설계 제약 (실측·확인 2026-10-13):
   1. robots.txt 는 **호스트 루트에서만** 유효하다. 따라서 이 출력은
-     <계정>.github.io 유저 사이트의 **레포 루트**에 그대로 올려야 한다.
+     <계정>.github.io 유저 사이트의 **사이트 루트**로 배포해야 한다.
      username.github.io/repo/robots.txt 는 어떤 크롤러도 가져가지 않는다.
+     배포는 GitHub Actions 가 _site/ 를 통째로 올린다 (.github/workflows/refresh.yml).
+     레포에는 소스만 있고 생성물은 커밋하지 않는다.
   2. GitHub Pages 는 **커스텀 HTTP 헤더를 지원하지 않는다**. Content-Type 을
      지정할 수 없으므로 JSON-LD 파일 확장자를 .jsonld 가 아니라 .json 으로 쓴다
      (.jsonld 는 Pages 가 application/octet-stream 으로 줄 가능성이 있다 - 미검증).
@@ -63,12 +64,12 @@ from hanwha_disclosure import LIST_PAGE
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_INPUT = ROOT / "data" / "products.json"
 DEFAULT_CONFIG = ROOT / "site.config.json"
-DEFAULT_OUT = ROOT / "site"
+DEFAULT_OUT = ROOT / "_site"
 
 PLACEHOLDER = "CHANGE-ME"
 
 #: robots.txt 에 명시할 크롤러 토큰. 전부 각 벤더 공식 문서에서 확인한 값이다.
-#: support.claude.com / developers.openai.com (2026-10-13)
+#: support.claude.com / developers.openai.com (2026-10-13), docs.perplexity.ai (2026-10-14)
 AI_CRAWLERS: list[tuple[str, str]] = [
     ("Claude-SearchBot", "Claude 웹 검색 인덱싱 - 검색 노출의 핵심"),
     ("Claude-User", "사용자가 Claude 에게 이 페이지를 읽게 할 때"),
@@ -76,23 +77,12 @@ AI_CRAWLERS: list[tuple[str, str]] = [
     ("OAI-SearchBot", "ChatGPT 검색 노출 - 검색 노출의 핵심"),
     ("ChatGPT-User", "ChatGPT 사용자 액션 (robots.txt 가 적용되지 않을 수 있음)"),
     ("GPTBot", "OpenAI 모델 학습용 수집"),
-    ("PerplexityBot", "Perplexity 인덱싱 (토큰은 미검증)"),
+    ("PerplexityBot", "Perplexity 검색 노출"),
     ("Google-Extended", "Gemini 학습 여부 제어 (검색 순위와 무관)"),
 ]
 
 #: 학습용 수집 봇. allowTrainingCrawlers=false 면 이 토큰만 Disallow 로 뒤집는다.
 TRAINING_CRAWLERS = {"ClaudeBot", "GPTBot", "Google-Extended"}
-
-#: 레포 루트에 함께 올라가는 빌드 소스. 콘텐츠가 아니므로 robots.txt 에서 뺀다.
-#: (Pages 가 legacy 모드로 레포 루트를 서빙할 때만 실제로 노출된다.)
-SOURCE_PATHS = (
-    "scripts/",
-    "static/",
-    "data/products.json",
-    "site.config.json",
-    "build.bat",
-    "NEXT.md",
-)
 
 DISCLAIMER = (
     "이 사이트는 한화생명보험 주식회사가 운영하는 공식 사이트가 아니며, "
@@ -517,21 +507,12 @@ def copy_static(static_dir: Path, out: Path) -> list[tuple[str, int]]:
 
 def build_robots(cfg: dict) -> str:
     allow_training = cfg.get("allowTrainingCrawlers", True)
-    source_rules = [f"Disallow: /{path}" for path in SOURCE_PATHS]
     lines = [
         "# robots.txt - 호스트 루트에서만 유효하다.",
-        "# 이 파일은 반드시 <계정>.github.io 레포 루트에 있어야 한다.",
+        "# 이 파일은 반드시 <계정>.github.io 사이트 루트에 있어야 한다.",
         "# username.github.io/<repo>/robots.txt 는 크롤러가 가져가지 않는다.",
         "",
-        "# 생성물을 레포 루트에 함께 커밋하므로 빌드 소스도 같은 호스트에서 서빙된다.",
-        "# 콘텐츠가 아니니 크롤 대상에서 뺀다. 이 규칙은 아래 이름이 적힌 크롤러의",
-        "# 그룹마다 다시 적는다 - 자기 이름의 그룹이 있는 크롤러는 '*' 그룹을 읽지",
-        "# 않기 때문이다 (RFC 9309 2.2.1).",
-        "# Disallow 를 Allow 보다 먼저 적는다 - 표준은 가장 긴 경로가 이기지만,",
-        "# 위에서부터 처음 맞는 줄을 따르는 해석기(파이썬 urllib.robotparser 등)도 있다.",
-        "",
         "User-agent: *",
-        *source_rules,
         "Allow: /",
         "",
     ]
@@ -540,7 +521,7 @@ def build_robots(cfg: dict) -> str:
         lines += [
             f"# {note}",
             f"User-agent: {token}",
-            *(["Disallow: /"] if blocked else [*source_rules, "Allow: /"]),
+            f"{'Disallow' if blocked else 'Allow'}: /",
             "",
         ]
     lines += [

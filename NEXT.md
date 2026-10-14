@@ -1,105 +1,108 @@
-# 재개 지점 (2026-10-13 중단)
+# 재개 지점 (2026-10-14 갱신)
 
 이 레포가 소스 정본이다. 사이트: https://jwjo943.github.io/
 
-## 0. 2026-10-13 마지막에 일어난 일 (해결됨)
+목적: AI(ChatGPT·Claude·Perplexity 등)가 한화생명 보험상품 정보를 찾고 읽을 수 있게 한다.
 
-Pages 가 legacy 모드라 **모든 푸시에 legacy 빌드가 돈다.** 소스/산출물을 분리하면서 레포 루트를
-비웠더니 legacy 가 Actions 배포보다 나중에 끝나는 푸시에서 **사이트 전체가 404** 가 됐다
-(커밋 `87c4193`, `cb743c3`). `/NEXT.md` 와 `/scripts/build_site.py` 만 200 이었다.
+## 0. 배포 구조
 
-복구 수단이 둘 다 막혀 있었다 — 레포 소유자의 gh OAuth 토큰으로는:
+레포에는 **소스만** 있다. 생성물(`_site/`)은 커밋하지 않는다.
 
-| 시도 | 결과 |
+| 항목 | 값 |
 |---|---|
-| `PUT /repos/{o}/{r}/pages` (build_type 전환) | **404** |
-| `gh workflow run refresh.yml` (푸시 없이 재배포) | **403 Must have admin rights** |
+| 배포 | `.github/workflows/refresh.yml` 이 `_site/` 를 만들어 GitHub Pages 로 올린다 |
+| Pages 방식 | `workflow` (Actions 단독). 2026-10-14 에 `legacy` 에서 전환 |
+| 실행 시점 | 매주 월 03:00 KST · `main` 푸시(`data/**` 만 바뀐 푸시 제외) · 수동 실행 |
+| 워크플로가 커밋하는 것 | `data/products.json` 하나 (`[skip ci]`) |
 
-그래서 **생성물을 레포 루트에도 커밋**하는 방식으로 전환했다. legacy 와 Actions 어느 쪽이
-이겨도 올바른 사이트가 나오므로 경쟁이 무해해진다. 지금은 푸시해도 안전하다.
-
-- 워크플로가 `_site` 로 빌드한 뒤 `rsync -a --delete` 로 루트에 반영한다 (소스는 제외).
-  `--delete` 때문에 사라진 상품의 낡은 페이지도 정리된다.
-- 봇 커밋 메시지에 `[skip ci]` 를 붙여 자기 재트리거(무한 루프)를 막는다. legacy 빌드는
-  Actions 가 아니라서 그대로 돌아 사이트를 올린다.
-- 루트에 올라간 빌드 소스는 `robots.txt` 의 `Disallow` 로 크롤에서 뺀다.
-
-## 1. 선택 — 원래 구조(소스/산출물 분리)로 되돌리려면
-
-지금은 생성물이 레포 루트에 함께 커밋되어 있어 안전하다. 대가는 두 가지다 — 빌드 소스가
-공개 URL 로 서빙되고(크롤은 `robots.txt` `Disallow` 로 차단), 갱신마다 200여 파일이 커밋된다.
-깔끔하게 하려면 Pages 를 Actions 단독 배포로 바꾸면 된다. **급하지 않다.**
-
-`build_type` 이 `legacy` 로 남아 있고 `actions/configure-pages@v5` 의 `enablement: true` 로는
-전환되지 않았다.
-
-### 조치 (사람이 해야 함 — CLI 로는 404/403)
+확인 명령:
 
 ```
-https://github.com/jwjo943/jwjo943.github.io/settings/pages
-→ Build and deployment → Source → "GitHub Actions"
+gh api repos/jwjo943/jwjo943.github.io/pages --jq .build_type    # workflow 여야 한다
 ```
 
-`PUT /repos/{owner}/{repo}/pages` 는 gh OAuth 토큰으로 404 다. CLI 로는 안 된다.
+`legacy` 로 되돌리면 안 된다. 레포 루트에 사이트 파일이 없어 **사이트 전체가 404** 가 된다
+(2026-10-13 커밋 `87c4193` 에서 실제 발생).
 
-전환 후 확인:
+## 1. (완료) Pages 를 Actions 단독 배포로 전환
 
-```
-gh api repos/jwjo943/jwjo943.github.io/pages --jq .build_type        # workflow 여야 함
-gh api repos/jwjo943/jwjo943.github.io/pages/builds?per_page=1       # 새 legacy 빌드가 없어야 함
-gh workflow run refresh.yml                                          # 재배포
-curl -sI https://jwjo943.github.io/ | head -1                        # 200 확인
-```
-
-전환했다면 워크플로의 `Sync built site into repo root` 단계와 루트의 생성물을 지워도 된다
-(그때는 `robots.txt` 의 `Disallow` 와 `SOURCE_PATHS` 도 같이 정리).
-`build_site.py --clean` 은 `.git`/`.github`/`scripts`/`site.config.json` 이 있는 디렉터리를
-지우려 하면 거부하므로, 루트에 직접 `--clean` 을 걸 수는 없다.
+2026-10-14 에 끝났다. 내용은 §0 으로 옮겼다. 번호는 다른 곳의 인용 때문에 남긴다.
 
 ## 2. 다른 PC 준비
 
-필요: Python **3.12 이상**, git, gh (`winget install --id GitHub.cli`)
+필요: Python **3.12 이상**, git, gh
 
 ```
 git clone https://github.com/jwjo943/jwjo943.github.io.git
 cd jwjo943.github.io
-py scripts/build_site.py --clean --out _site
+python3 scripts/build_site.py --clean
 ```
 
-`_site/` 와 `data/jsonld/` 는 `.gitignore` 대상이다. 수집부터 다시 하려면 `build.bat`
-(Windows) 또는 `py scripts/fetch_products.py` 먼저.
+마지막 줄 근처의 `HTML ...개` 와 `sitemap URL ...개` 가 같은 수인지 확인한다. 결과는 `_site/` 에 생긴다.
+
+Windows 는 `python3` 대신 `py` 를 쓴다. 수집부터 다시 하려면 `build.bat`(Windows) 또는
+`python3 scripts/fetch_products.py` 를 먼저 실행한다.
+
+푸시하려면 `gh auth login` 으로 `jwjo943` 계정에 로그인해 둔다.
 
 ## 3. 현재 상태
 
 | 항목 | 상태 |
 |---|---|
-| 사이트 배포 | 완료 — 102페이지 (index 1 + 상품 101) |
-| 수집 데이터 | 상품 101건(주보험 70 + 특약 31) / 판매기간 793구간 / 공시문서 2,141건 · 기준일 2026-10-13 |
-| Google 소유 확인 | 완료 (meta 태그, 전 102페이지) |
-| IndexNow | 완료 — 102 URL, HTTP 200 (Bing·Yandex·Seznam·Naver) |
-| 자동 갱신 | 동작 확인 — 월 03:00 KST + 소스 변경 + 수동 dispatch |
+| 사이트 | 117페이지 = 첫 화면 1 + 구분 15 + 상품 101 |
+| 수록 범위 | **판매중 상품만.** 판매중지 1,430건(2026-10-14 수집)은 싣지 않기로 결정 |
+| 구분 페이지 | `/categories/<판매채널코드>-<상품종류코드>/` (예: `/categories/sa-ga/` = 개인 > 보장성) |
+| Google 소유 확인 | 완료 (meta 태그, 전 페이지) |
+| IndexNow | 배포 때마다 sitemap 전체를 자동 제출 (Bing·Yandex·Seznam·Naver) |
+| AI 수집기 접근 | ClaudeBot·Claude-User·Claude-SearchBot·GPTBot·OAI-SearchBot·ChatGPT-User·PerplexityBot 이름으로 요청 시 200 (2026-10-14 실측) |
 
 ## 4. 미완 / 대기
 
 | 항목 | 상태 |
 |---|---|
-| Google sitemap 가져오기 | "가져올 수 없음". 사이트·sitemap 은 실측 정상(200, 형식 위반 0) → Google 측 타이밍. URL 검사 실시간 테스트 결과 미확인 |
-| schema.org validator 전수(102) | **429 로 차단**(탐색 호출로 IP 한도 소진). 표본 5건 오류 0·경고 0. 재시도: `py scripts/validate_schema.py --all --delay 10` |
-| Bing Webmaster 등록 | 미착수. Search Console 인증 끝났으니 "Import from Google Search Console" 로 가능 |
-| 판매중지 상품 | `--sell-flag N` 구현됐으나 미실행. 건수 미확인 |
-| 카테고리 페이지 15개 | 미착수. 현재 분류는 index 섹션뿐 |
-| 보험료·보장금액·보장내역 | **미수록.** 공시실 JSON 에 없고 2,141건 PDF 안에만 있다. PDF 파싱은 별개 프로젝트 규모. 사이트 가치를 가장 크게 좌우하는 항목 |
+| 보험료·보장금액·보장내역 | **미수록.** 공시실 조회 응답에 없고 공시문서 PDF 안에만 있다. AI 가 "무엇을 보장하나", "보험료가 얼마인가" 에 답하지 못하는 이유다. 사이트 목적을 가장 크게 좌우한다 |
+| 검색 색인 | 2026-10-14 `site:jwjo943.github.io` 검색 결과 0건. AI 검색은 검색 색인에 실린 페이지를 쓰므로 색인 전에는 노출되지 않는다 |
+| Google sitemap | Search Console 에 "읽을 수 없음"(마지막 읽기 2026-10-13). sitemap 은 실측 정상(200, XML 파싱 통과). Google 이 다시 읽기를 기다리는 중 |
+| Bing Webmaster 등록 | 미착수. 사람이 로그인해서 해야 한다 |
+| schema.org 검증 | 아래 §4-1 |
+
+### 4-1. schema.org 검증
+
+2026-10-14 에 상품·첫 화면 102페이지 중 **57페이지 통과(오류 0 · 경고 0), 45페이지 미검사.**
+구분 15페이지도 미검사다.
+
+`python3 scripts/validate_schema.py --all --delay 10` 은 **끝까지 돌지 못한다.** 실측:
+
+| 실측 | 내용 |
+|---|---|
+| 10초 간격 | 57건 통과 뒤부터 계속 `429`(요청 한도 초과) |
+| 30분 뒤 재시도 | 여전히 `429` |
+| 약 2시간 뒤 | `https://www.google.com/sorry/...` 로 넘겨짐 (자동 요청으로 보고 막은 상태) |
+
+한도가 언제 풀리는지는 미확인이다. 미검사 상품 번호:
+
+```
+2594 2327 2275 2293 2294 1431 2408 1420 1421 1339 1398 1334 2588 1394 2609
+2611 2612 2602 2603 2604 2590 2591 2592 2579 2580 2581 2555 2477 2445 2444
+2443 2308 2158 1865 1786 816 2550 2476 2449 2407 1484 1481 1482 1483 1465
+```
+
+특정 페이지만 검사:
+
+```
+python3 scripts/validate_schema.py https://jwjo943.github.io/products/2594/
+```
 
 ## 5. 알려진 함정
 
-코드 주석에 근거를 남겼지만 요약하면:
-
-1. **`getList.do` 무필터는 전체가 아니다** — 33건만 오고 이건 첫 구분(개인/보장성)이다. 15개 구분을 전부 `getList2.do` 로 돌려야 101건이 나온다.
-2. **`www.hanwhalife.com` 은 TLS legacy renegotiation 을 요구** — `ssl.OP_LEGACY_SERVER_CONNECT` 없이는 접속 불가. Windows·ubuntu 양쪽 동일.
+1. **`getList.do` 무필터는 전체가 아니다** — 33건만 오고 이것은 첫 구분(개인/보장성)이다. 15개 구분을 전부 `getList2.do` 로 돌려야 101건이 나온다.
+2. **`www.hanwhalife.com` 은 TLS legacy renegotiation 을 요구** — `ssl.OP_LEGACY_SERVER_CONNECT` 없이는 접속 불가.
 3. **robots.txt 는 호스트 루트에서만 유효** — 그래서 프로젝트 사이트가 아닌 `<계정>.github.io` 유저 사이트여야 한다.
-4. **GitHub Pages 는 커스텀 헤더 불가** — JSON-LD 파일을 `.jsonld` 가 아니라 `.json` 으로 쓴 이유. 배포 후 실측 `application/json; charset=utf-8`.
-5. **schema.org 에 `InsuranceProduct` 가 없다** — `FinancialProduct` 사용. 그리고 `additionalProperty`·`inLanguage`·`dateModified` 는 FinancialProduct 에 **없는 속성**이므로 넣으면 안 된다.
-6. **llms.txt 는 사실상 읽히지 않는다** — 넣어뒀지만 기대하지 말 것. Google 공식 미사용.
-7. **Google 은 sitemap ping(2023년 폐지, 404)과 IndexNow(미참여) 둘 다 경로가 없다** — robots.txt `Sitemap:` 지시자와 Search Console 수동 제출만 남는다.
-8. **PowerShell 5.1 은 BOM 없는 UTF-8 `.ps1` 을 CP949 로 파싱**한다. 반대로 PowerShell 이 쓴 JSON 에는 BOM 이 붙어 Python 이 죽는다 → 설정/데이터 JSON 은 `utf-8-sig` 로 읽는다. PowerShell 에서 bash heredoc 은 파서 오류다.
+4. **GitHub Pages 는 커스텀 헤더 불가** — JSON-LD 파일을 `.jsonld` 가 아니라 `.json` 으로 쓴 이유.
+5. **schema.org 에 `InsuranceProduct` 가 없다** — `FinancialProduct` 사용. `additionalProperty`·`inLanguage`·`dateModified` 는 FinancialProduct 에 **없는 속성**이므로 넣으면 안 된다.
+6. **llms.txt 는 사실상 읽히지 않는다** — 넣어뒀지만 기대하지 말 것.
+7. **Google 은 sitemap ping(폐지)과 IndexNow(미참여) 둘 다 경로가 없다** — robots.txt `Sitemap:` 줄과 Search Console 수동 제출만 남는다.
+8. **PowerShell 5.1 은 BOM 없는 UTF-8 `.ps1` 을 CP949 로 파싱**한다. PowerShell 이 쓴 JSON 에는 BOM 이 붙는다 → 설정/데이터 JSON 은 `utf-8-sig` 로 읽는다.
 9. **공시문서 PDF 는 안정적 GET URL 이 없다** — 다운로드가 POST 전용. 파일명만 싣고 출처는 `schText` 딥링크로 건다.
+10. **robots.txt 에서 자기 이름의 묶음이 있는 수집기는 `User-agent: *` 묶음을 읽지 않는다** (RFC 9309 §2.2.1). 특정 경로를 막으려면 이름이 적힌 묶음마다 다시 적어야 한다.
+11. **생명보험협회 공시실(`pub.insure.or.kr`)은 자동 수집 금지** — `robots.txt` 가 네이버·다음 외 전부 `Disallow:/` 다 (2026-10-14 확인).

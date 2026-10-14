@@ -31,10 +31,10 @@ if errorlevel 1 exit /b 1
 
 :SITE
 echo [3/3] build static site
-py scripts\build_site.py --clean
+py scripts\build_site.py --clean --out _site
 if errorlevel 1 exit /b 1
 
 echo.
-echo Done. Publish the contents of the site\ directory to the ROOT of your
-echo ^<account^>.github.io repository. robots.txt is only honored at the host root.
+echo Done. Output is in _site\. Deployment is done by GitHub Actions on push
+echo (.github\workflows\refresh.yml); _site\ is not committed.
 exit /b 0
