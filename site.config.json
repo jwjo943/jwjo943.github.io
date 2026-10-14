@@ -1,5 +1,5 @@
 {
-  "_": "baseUrl 은 반드시 <계정명>.github.io 유저 사이트여야 robots.txt 가 유효하다. 프로젝트 사이트(username.github.io/repo) 의 robots.txt 는 어떤 크롤러도 읽지 않는다. 산출물은 이 레포의 루트에 올려야 한다.",
+  "_": "baseUrl 은 반드시 <계정명>.github.io 유저 사이트여야 robots.txt 가 유효하다. 프로젝트 사이트(username.github.io/repo) 의 robots.txt 는 어떤 크롤러도 읽지 않는다. 산출물(_site/)은 GitHub Actions 가 Pages 로 올린다.",
   "baseUrl": "https://jwjo943.github.io",
   "siteName": "한화생명 보험상품 공시 색인",
   "siteDescription": "한화생명 상품공시실에 공시된 보험상품의 상품명, 분류, 판매기간 이력, 공시문서 목록을 상품 1건=URL 1개로 정리한 비공식 색인.",
@@ -9,7 +9,7 @@
   "_verification": "사이트 소유 확인. 발급받은 content 값을 그대로 넣는다 (가공 금지). Google=google-site-verification, Bing=msvalidate.01, Naver=naver-site-verification. 값이 빈 문자열이면 해당 태그는 출력되지 않는다. 확인 '파일'(google<토큰>.html, BingSiteAuth.xml)은 내용을 수정하면 안 되므로 여기 적지 말고 static/ 에 받은 파일을 그대로 두면 된다.",
   "verificationMetaTags": {
     "google-site-verification": "eFlBW0vqYMXPl3aE3aoOvbcqLShzN4NK5yzxKd9gDOU",
-    "msvalidate.01": "",
+    "msvalidate.01": "99500BDA4524E0FF436E10E51B62356C",
     "naver-site-verification": ""
   },
 

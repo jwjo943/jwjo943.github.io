@@ -52,7 +52,7 @@ Windows 는 `python3` 대신 `py` 를 쓴다. 수집부터 다시 하려면 `bui
 | 사이트 | 117페이지 = 첫 화면 1 + 구분 15 + 상품 101 |
 | 수록 범위 | **판매중 상품만.** 판매중지 1,430건(2026-10-14 수집)은 싣지 않기로 결정 |
 | 구분 페이지 | `/categories/<판매채널코드>-<상품종류코드>/` (예: `/categories/sa-ga/` = 개인 > 보장성) |
-| Google 소유 확인 | 완료 (meta 태그, 전 페이지) |
+| 소유 확인 | Google · Bing meta 태그, 전 페이지 (`site.config.json` 의 `verificationMetaTags`) |
 | IndexNow | 배포 때마다 sitemap 전체를 자동 제출 (Bing·Yandex·Seznam·Naver) |
 | AI 수집기 접근 | ClaudeBot·Claude-User·Claude-SearchBot·GPTBot·OAI-SearchBot·ChatGPT-User·PerplexityBot 이름으로 요청 시 200 (2026-10-14 실측) |
 
@@ -62,8 +62,8 @@ Windows 는 `python3` 대신 `py` 를 쓴다. 수집부터 다시 하려면 `bui
 |---|---|
 | 보험료·보장금액·보장내역 | **미수록.** 공시실 조회 응답에 없고 공시문서 PDF 안에만 있다. AI 가 "무엇을 보장하나", "보험료가 얼마인가" 에 답하지 못하는 이유다. 사이트 목적을 가장 크게 좌우한다. PDF 서버가 자동 수집을 막고 있다 (§5-12) |
 | 검색 색인 | 2026-10-14 `site:jwjo943.github.io` 검색 결과 0건. AI 검색은 검색 색인에 실린 페이지를 쓰므로 색인 전에는 노출되지 않는다 |
-| Google sitemap | Search Console 에 "읽을 수 없음"(마지막 읽기 2026-10-13). sitemap 은 실측 정상(200, XML 파싱 통과). Google 이 다시 읽기를 기다리는 중 |
-| Bing Webmaster 등록 | 미착수. 사람이 로그인해서 해야 한다 |
+| Google sitemap | Search Console 에서 "성공", 발견된 페이지 117 (2026-10-14 확인). 발견은 색인과 다르다 — 색인 수는 Search Console "페이지" 메뉴의 "색인이 생성됨" |
+| Bing Webmaster 등록 | 소유 확인 meta(`msvalidate.01`)를 2026-10-14 에 넣었다. 확인 버튼·sitemap 제출은 사람이 Bing Webmaster 에서 한다 |
 | schema.org 검증 | 아래 §4-1 |
 
 ### 4-1. schema.org 검증
