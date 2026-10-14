@@ -20,6 +20,8 @@
 
 ## 개인 > 보장성 (33건)
 
+구분 페이지: https://jwjo943.github.io/categories/sa-ga/
+
 - [한화생명 H건강플러스보험 무배당](https://jwjo943.github.io/products/2544/): 판매중 2026-07-01~, 판매기간 5구간
 - [한화생명 H보장보험Ⅰ 무배당](https://jwjo943.github.io/products/2514/): 판매중 2026-07-01~, 판매기간 6구간
 - [한화생명 H종신보험 무배당](https://jwjo943.github.io/products/2478/): 판매중 2026-09-01~, 판매기간 9구간
@@ -56,6 +58,8 @@
 
 ## 개인 > 연금 (4건)
 
+구분 페이지: https://jwjo943.github.io/categories/sa-gb/
+
 - [한화생명 바로연금보험 무배당](https://jwjo943.github.io/products/2274/): 판매중 2026-04-01~, 판매기간 8구간
 - [한화생명 스마트V연금보험 무배당](https://jwjo943.github.io/products/2288/): 판매중 2026-07-01~, 판매기간 11구간
 - [한화생명 스마트하이브리드연금보험 무배당](https://jwjo943.github.io/products/2309/): 판매중 2026-09-14~, 판매기간 24구간
@@ -63,14 +67,20 @@
 
 ## 개인 > 생사 혼합 (2건)
 
+구분 페이지: https://jwjo943.github.io/categories/sa-gc/
+
 - [WE CARE DREAM 저축보험 무배당](https://jwjo943.github.io/products/2595/): 판매중 2026-06-01~, 판매기간 2구간
 - [한화생명 2030 목돈마련 디딤돌저축보험 무배당](https://jwjo943.github.io/products/2369/): 판매중 2026-04-01~, 판매기간 8구간
 
 ## 개인 > 장애인 전용 (1건)
 
+구분 페이지: https://jwjo943.github.io/categories/sa-gf/
+
 - [한화생명 장애인전용 곰두리보장보험 무배당](https://jwjo943.github.io/products/2367/): 판매중 2026-04-01~, 판매기간 10구간
 
 ## 단체 > 보장성 (3건)
+
+구분 페이지: https://jwjo943.github.io/categories/sb-ga/
 
 - [한화생명 H 기업재해보장보험 무배당](https://jwjo943.github.io/products/2430/): 판매중 2026-04-01~, 판매기간 7구간
 - [한화생명 기업복지라이프플랜보험 무배당](https://jwjo943.github.io/products/2271/): 판매중 2026-06-06~, 판매기간 11구간
@@ -78,15 +88,21 @@
 
 ## 단체 > 연금 (3건)
 
+구분 페이지: https://jwjo943.github.io/categories/sb-gb/
+
 - [한화생명 Wealth직장인연금보험 무배당](https://jwjo943.github.io/products/2293/): 판매중 2026-04-01~, 판매기간 10구간
 - [한화생명 연금보험Enterprise 무배당](https://jwjo943.github.io/products/2294/): 판매중 2026-09-01~, 판매기간 11구간
 - [한화생명 연금저축 미래로기업복지연금보험](https://jwjo943.github.io/products/2275/): 판매중 2026-04-01~, 판매기간 9구간
 
 ## 단체 > 생사 혼합 (1건)
 
+구분 페이지: https://jwjo943.github.io/categories/sb-gc/
+
 - [한화생명 Wealth단체저축보험 무배당](https://jwjo943.github.io/products/1431/): 판매중 2026-04-01~, 판매기간 28구간
 
 ## 단체 > 퇴직 (6건)
+
+구분 페이지: https://jwjo943.github.io/categories/sb-ge/
 
 - [무배당 자산관리 한화퇴직연금 연금전환특약 약관](https://jwjo943.github.io/products/2408/): 판매중 2025-12-31~, 판매기간 2구간
 - [무배당 한화개인형 퇴직연금 자산관리보험(개인형)](https://jwjo943.github.io/products/1418/): 판매중 2025-06-30~, 판매기간 18구간
@@ -97,10 +113,14 @@
 
 ## 방카 슈랑스 > 보장성 (2건)
 
+구분 페이지: https://jwjo943.github.io/categories/sc-ga/
+
 - [한화생명 스마트V상해보험 무배당](https://jwjo943.github.io/products/2556/): 판매중 2026-05-01~, 판매기간 5구간
 - [한화생명 스마트V상해보험 무배당(e)](https://jwjo943.github.io/products/2607/): 판매중 2026-06-01~, 판매기간 1구간
 
 ## 방카 슈랑스 > 연금 (4건)
+
+구분 페이지: https://jwjo943.github.io/categories/sc-gb/
 
 - [한화생명 바로연금보험 무배당](https://jwjo943.github.io/products/2273/): 판매중 2026-04-01~, 판매기간 8구간
 - [한화생명 스마트V연금보험 무배당](https://jwjo943.github.io/products/2289/): 판매중 2026-07-01~, 판매기간 11구간
@@ -108,6 +128,8 @@
 - [한화생명 연금저축 스마트하이드림연금보험](https://jwjo943.github.io/products/1373/): 판매중 2026-04-01~, 판매기간 27구간
 
 ## 다이렉트 > 보장성 (7건)
+
+구분 페이지: https://jwjo943.github.io/categories/se-ga/
 
 - [한화생명 e건강보험 무배당](https://jwjo943.github.io/products/2587/): 판매중 2026-04-01~, 판매기간 2구간
 - [한화생명 e암보험(비갱신형) 무배당](https://jwjo943.github.io/products/2244/): 판매중 2026-04-01~, 판매기간 11구간
@@ -119,15 +141,21 @@
 
 ## 다이렉트 > 연금 (2건)
 
+구분 페이지: https://jwjo943.github.io/categories/se-gb/
+
 - [한화생명 e연금보험 무배당](https://jwjo943.github.io/products/1398/): 판매중 2026-04-01~, 판매기간 29구간
 - [한화생명 e연금저축보험 무배당](https://jwjo943.github.io/products/1334/): 판매중 2026-04-01~, 판매기간 27구간
 
 ## 다이렉트 > 생사 혼합 (2건)
 
+구분 페이지: https://jwjo943.github.io/categories/se-gc/
+
 - [한화생명 2030 목돈마련 디딤돌저축보험 무배당](https://jwjo943.github.io/products/2588/): 판매중 2026-04-01~, 판매기간 8구간
 - [한화생명 e재테크 저축보험 무배당](https://jwjo943.github.io/products/1394/): 판매중 2026-05-18~, 판매기간 30구간
 
 ## 특약 > 보장성 (22건)
+
+구분 페이지: https://jwjo943.github.io/categories/sd-ga/
 
 - [가입 후 무사고 고객 계약전환특약Ⅰ](https://jwjo943.github.io/products/2579/): 판매중 2026-01-01~, 판매기간 1구간
 - [가입 후 무사고 고객 계약전환특약Ⅱ](https://jwjo943.github.io/products/2580/): 판매중 2026-01-01~, 판매기간 1구간
@@ -153,6 +181,8 @@
 - [출산육아휴직 보험료할인특약](https://jwjo943.github.io/products/2591/): 판매중 2026-04-01~, 판매기간 1구간
 
 ## 특약 > 연금 (9건)
+
+구분 페이지: https://jwjo943.github.io/categories/sd-gb/
 
 - [2대질병연금전환특약 무배당](https://jwjo943.github.io/products/2407/): 판매중 2025-04-01~, 판매기간 2구간
 - [2대질병연금전환특약Ⅱ 무배당 ](https://jwjo943.github.io/products/2449/): 판매중 2026-01-01~, 판매기간 3구간
