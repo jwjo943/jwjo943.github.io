@@ -10,7 +10,7 @@
   "verificationMetaTags": {
     "google-site-verification": "eFlBW0vqYMXPl3aE3aoOvbcqLShzN4NK5yzxKd9gDOU",
     "msvalidate.01": "99500BDA4524E0FF436E10E51B62356C",
-    "naver-site-verification": ""
+    "naver-site-verification": "3c05234c209d8ca37f8bf6cdcd78e85eb1b68006"
   },
 
   "_static": "이 디렉터리의 파일은 퍼블리시 루트로 그대로 복사된다. --clean 재빌드에도 살아남는다. 소유 확인 파일, CNAME, ads.txt 등을 둔다. 경로가 생성물과 겹치면 static 이 이긴다.",
