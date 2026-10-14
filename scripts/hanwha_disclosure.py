@@ -60,7 +60,12 @@ DOCUMENT_KINDS: dict[str, str] = {
 }
 
 #: 공시문서 PDF 는 POST 전용 엔드포인트로만 내려온다 (안정적인 GET URL 이 없다).
-DOCUMENT_DOWNLOAD_ENDPOINT = BASE + "/www/announce/goods/download_chk.asp"
+#: 호스트는 www 가 아니라 파일 서버다. 공시실 화면이 global.getFileWeb() 으로 붙이는 값
+#: (상품목록 페이지 HTML, 2026-10-14 확인). 폼 값은 file_name=<FILE_NAME> 하나이고
+#: CP949 로 인코딩해야 한다 — UTF-8 로 보내면 "파일이 존재하지 않아" 화면(HTML)이 온다.
+FILE_BASE = "https://file.hanwhalife.com"
+DOCUMENT_DOWNLOAD_ENDPOINT = FILE_BASE + "/www/announce/goods/download_chk.asp"
+DOCUMENT_FILENAME_ENCODING = "cp949"
 
 #: 공시실 푸터에서 확인한 공시 주체 (hw 상품목록 페이지 HTML, 2026-10-13).
 PUBLISHER_LEGAL_NAME = "한화생명보험 주식회사"

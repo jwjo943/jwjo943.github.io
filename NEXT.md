@@ -60,7 +60,7 @@ Windows 는 `python3` 대신 `py` 를 쓴다. 수집부터 다시 하려면 `bui
 
 | 항목 | 상태 |
 |---|---|
-| 보험료·보장금액·보장내역 | **미수록.** 공시실 조회 응답에 없고 공시문서 PDF 안에만 있다. AI 가 "무엇을 보장하나", "보험료가 얼마인가" 에 답하지 못하는 이유다. 사이트 목적을 가장 크게 좌우한다 |
+| 보험료·보장금액·보장내역 | **미수록.** 공시실 조회 응답에 없고 공시문서 PDF 안에만 있다. AI 가 "무엇을 보장하나", "보험료가 얼마인가" 에 답하지 못하는 이유다. 사이트 목적을 가장 크게 좌우한다. PDF 서버가 자동 수집을 막고 있다 (§5-12) |
 | 검색 색인 | 2026-10-14 `site:jwjo943.github.io` 검색 결과 0건. AI 검색은 검색 색인에 실린 페이지를 쓰므로 색인 전에는 노출되지 않는다 |
 | Google sitemap | Search Console 에 "읽을 수 없음"(마지막 읽기 2026-10-13). sitemap 은 실측 정상(200, XML 파싱 통과). Google 이 다시 읽기를 기다리는 중 |
 | Bing Webmaster 등록 | 미착수. 사람이 로그인해서 해야 한다 |
@@ -106,3 +106,4 @@ python3 scripts/validate_schema.py https://jwjo943.github.io/products/2594/
 9. **공시문서 PDF 는 안정적 GET URL 이 없다** — 다운로드가 POST 전용. 파일명만 싣고 출처는 `schText` 딥링크로 건다.
 10. **robots.txt 에서 자기 이름의 묶음이 있는 수집기는 `User-agent: *` 묶음을 읽지 않는다** (RFC 9309 §2.2.1). 특정 경로를 막으려면 이름이 적힌 묶음마다 다시 적어야 한다.
 11. **생명보험협회 공시실(`pub.insure.or.kr`)은 자동 수집 금지** — `robots.txt` 가 네이버·다음 외 전부 `Disallow:/` 다 (2026-10-14 확인).
+12. **공시문서 PDF 서버(`file.hanwhalife.com`)는 자동 수집 금지** — `robots.txt` 가 `User-agent: *` / `Disallow: /` 다 (2026-10-14 확인). 받는 방법은 `https://file.hanwhalife.com/www/announce/goods/download_chk.asp` 에 `file_name=<FILE_NAME 값>` POST, 파일명은 **CP949** 로 인코딩 (UTF-8 이면 "파일이 존재하지 않아" HTML 이 온다). 사람이 직접 돌리는 `scripts/download_documents.py` 로만 받는다 — 빌드·워크플로에 넣지 않는다.

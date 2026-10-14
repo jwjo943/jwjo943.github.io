@@ -6,3 +6,6 @@ data/jsonld/
 
 __pycache__/
 *.pyc
+
+# download_documents.py 가 받는 공시문서 PDF (수백 MB, 커밋하지 않는다)
+pdf/
