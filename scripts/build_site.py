@@ -517,18 +517,22 @@ def copy_static(static_dir: Path, out: Path) -> list[tuple[str, int]]:
 
 def build_robots(cfg: dict) -> str:
     allow_training = cfg.get("allowTrainingCrawlers", True)
+    source_rules = [f"Disallow: /{path}" for path in SOURCE_PATHS]
     lines = [
         "# robots.txt - 호스트 루트에서만 유효하다.",
         "# 이 파일은 반드시 <계정>.github.io 레포 루트에 있어야 한다.",
         "# username.github.io/<repo>/robots.txt 는 크롤러가 가져가지 않는다.",
         "",
-        "User-agent: *",
-        "Allow: /",
-        "",
         "# 생성물을 레포 루트에 함께 커밋하므로 빌드 소스도 같은 호스트에서 서빙된다.",
-        "# 콘텐츠가 아니니 크롤 대상에서 뺀다. (같은 User-agent 그룹 안에 둔다 -",
-        "#  그룹을 쪼개면 어느 규칙이 적용되는지 모호해진다.)",
-        *(f"Disallow: /{path}" for path in SOURCE_PATHS),
+        "# 콘텐츠가 아니니 크롤 대상에서 뺀다. 이 규칙은 아래 이름이 적힌 크롤러의",
+        "# 그룹마다 다시 적는다 - 자기 이름의 그룹이 있는 크롤러는 '*' 그룹을 읽지",
+        "# 않기 때문이다 (RFC 9309 2.2.1).",
+        "# Disallow 를 Allow 보다 먼저 적는다 - 표준은 가장 긴 경로가 이기지만,",
+        "# 위에서부터 처음 맞는 줄을 따르는 해석기(파이썬 urllib.robotparser 등)도 있다.",
+        "",
+        "User-agent: *",
+        *source_rules,
+        "Allow: /",
         "",
     ]
     for token, note in AI_CRAWLERS:
@@ -536,7 +540,7 @@ def build_robots(cfg: dict) -> str:
         lines += [
             f"# {note}",
             f"User-agent: {token}",
-            f"{'Disallow' if blocked else 'Allow'}: /",
+            *(["Disallow: /"] if blocked else [*source_rules, "Allow: /"]),
             "",
         ]
     lines += [
@@ -574,9 +578,7 @@ def build_sitemap(data: dict, cfg: dict) -> str:
 def build_llms_txt(data: dict, cfg: dict) -> str:
     base = cfg["baseUrl"]
     counts = data["counts"]
-    groups: dict[str, list[dict]] = {}
-    for product in data["products"]:
-        groups.setdefault(product["category"]["label"], []).append(product)
+    groups = group_by_category(data["products"])
 
     out = [
         f"# {cfg['siteName']}",
@@ -601,8 +603,13 @@ def build_llms_txt(data: dict, cfg: dict) -> str:
         f"- [sitemap.xml]({base}/sitemap.xml)",
         "",
     ]
-    for label, items in groups.items():
-        out += [f"## {label} ({len(items)}건)", ""]
+    for category, items in groups:
+        out += [
+            f"## {category['label']} ({len(items)}건)",
+            "",
+            f"구분 페이지: {category_url(base, category)}",
+            "",
+        ]
         for product in sorted(items, key=lambda x: x["name"]):
             current = next((t for t in product["terms"] if t["onSale"]), None)
             state = f"판매중 {current['sellStart']}~" if current else "판매중지"
