@@ -7,6 +7,7 @@
 
 출력(퍼블리시 루트):
     index.html                    상품 101건 색인
+    categories/<slug>/index.html  구분(판매채널 > 상품종류) 1개의 상품 목록
     products/<idx>/index.html     상품 1건
     data/catalog.json             전체 JSON-LD
     data/products/<idx>.json      상품별 JSON-LD
@@ -162,9 +163,14 @@ def page(
     canonical: str,
     body: str,
     jsonld: Any,
-    alternate: str,
+    alternate: str | None = None,
     extra_head: str = "",
 ) -> str:
+    # alternate: 같은 내용의 JSON-LD 파일이 따로 있는 페이지만 넘긴다.
+    alternate_link = (
+        f'\n<link rel="alternate" type="application/ld+json" href="{e(alternate)}">'
+        if alternate else ""
+    )
     return f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -172,8 +178,7 @@ def page(
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title>
 <meta name="description" content="{e(description)}">{extra_head}
-<link rel="canonical" href="{e(canonical)}">
-<link rel="alternate" type="application/ld+json" href="{e(alternate)}">
+<link rel="canonical" href="{e(canonical)}">{alternate_link}
 <style>{STYLE}</style>
 <script type="application/ld+json">
 {ld(jsonld)}
@@ -190,28 +195,149 @@ def page(
 """
 
 
+# -- 구분(카테고리) ---------------------------------------------------------
+
+
+def category_slug(category: dict) -> str:
+    """구분 페이지 경로에 쓰는 식별자. 공시실 코드(sellType·goodsType)로 만든다.
+
+    이름("개인 > 보장성")이 아니라 코드를 쓰는 이유: 한글·공백·'>' 가 URL 에
+    들어가지 않고, 공시실이 표기를 바꿔도("방카 슈랑스" 등) 주소가 유지된다.
+    """
+    slug = f"{category['sellType']}-{category['goodsType']}".lower()
+    if not re.fullmatch(r"[a-z0-9]+-[a-z0-9]+", slug):
+        raise ValueError(f"구분 코드가 URL 에 쓸 수 없는 형태다 -> {slug!r}")
+    return slug
+
+
+def category_url(base: str, category: dict) -> str:
+    return f"{base}/categories/{category_slug(category)}/"
+
+
+def group_by_category(products: list[dict]) -> list[tuple[dict, list[dict]]]:
+    """상품을 구분별로 묶는다. 순서는 데이터에 처음 나온 순서(공시실 순서)."""
+    groups: dict[str, tuple[dict, list[dict]]] = {}
+    for product in products:
+        category = product["category"]
+        groups.setdefault(category_slug(category), (category, []))[1].append(product)
+    return list(groups.values())
+
+
+def build_category(
+    category: dict, items: list[dict], groups: list[tuple[dict, list[dict]]],
+    cfg: dict, data: dict, org: dict,
+) -> str:
+    base = cfg["baseUrl"]
+    url = category_url(base, category)
+    label = category["label"]
+    ordered = sorted(items, key=lambda x: x["name"])
+
+    rows = []
+    for product in ordered:
+        current = next((t for t in product["terms"] if t["onSale"]), None)
+        rows.append(
+            f'<tr><td><a href="{e(base)}/products/{product["idx"]}/">{e(product["name"])}</a></td>'
+            f"<td>{'특약' if product['isRider'] else '주보험'}</td>"
+            f"<td>{e(current['sellStart']) if current else '판매중지'}</td>"
+            f"<td>{len(product['terms'])}</td></tr>"
+        )
+
+    others = "\n".join(
+        f'<li><a href="{e(category_url(base, c))}">{e(c["label"])}</a> ({len(ps)}건)</li>'
+        for c, ps in groups
+        if category_slug(c) != category_slug(category)
+    )
+
+    item_list = {
+        "@type": "ItemList",
+        "@id": f"{url}#list",
+        "name": f"{label} 상품 목록",
+        "numberOfItems": len(ordered),
+        "itemListOrder": f"{SCHEMA}/ItemListUnordered",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": i,
+                "url": f"{base}/products/{p['idx']}/",
+                "name": p["name"],
+            }
+            for i, p in enumerate(ordered, start=1)
+        ],
+    }
+    breadcrumb = {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": cfg["siteName"], "item": f"{base}/"},
+            {"@type": "ListItem", "position": 2, "name": label, "item": url},
+        ],
+    }
+
+    description = (
+        f"한화생명 상품공시실의 {category['sellTypeName']} 판매채널 "
+        f"{category['goodsTypeName']} 상품 {len(ordered)}건 목록. "
+        f"상품명, 주보험·특약 구분, 판매개시일, 판매기간 구간 수. 기준일 {data['fetchedAt']}."
+    )
+
+    body = f"""<nav class="bc"><a href="{e(base)}/">{e(cfg['siteName'])}</a> &gt; {e(label)}</nav>
+<main>
+<h1>{e(label)} 상품 {len(ordered)}건</h1>
+<p class="meta">기준일 {e(data['fetchedAt'])} · 공시 주체 {e(data['source']['publisherLegalName'])}</p>
+
+<dl>
+<dt>판매채널</dt><dd>{e(category['sellTypeName'])}</dd>
+<dt>상품종류</dt><dd>{e(category['goodsTypeName'])}</dd>
+<dt>상품 수</dt><dd>{len(ordered)}</dd>
+</dl>
+
+<h2>상품 목록</h2>
+<div class="wrap">
+<table>
+<caption>{e(label)} 판매중 상품</caption>
+<thead><tr><th>상품명</th><th>상품구성</th><th>판매개시</th><th>판매기간 구간</th></tr></thead>
+<tbody>
+{chr(10).join(rows)}
+</tbody>
+</table>
+</div>
+
+<h2>다른 구분</h2>
+<ul class="products">
+{others}
+</ul>
+</main>"""
+
+    return page(
+        title=f"{label} 상품 목록 · {cfg['siteName']}",
+        description=description,
+        canonical=url,
+        jsonld={"@context": SCHEMA, "@graph": [org, item_list, breadcrumb]},
+        body=body,
+        extra_head=verification_meta(cfg),
+    )
+
+
 # -- 색인 페이지 ------------------------------------------------------------
 
 
 def build_index(data: dict, cfg: dict, org: dict, dataset: dict, nodes: dict[int, dict]) -> str:
     base = cfg["baseUrl"]
     counts = data["counts"]
-    groups: dict[str, list[dict]] = {}
-    for product in data["products"]:
-        groups.setdefault(product["category"]["label"], []).append(product)
+    groups = group_by_category(data["products"])
 
     rows = "\n".join(
-        f"<tr><td>{e(label)}</td><td>{len(items)}</td></tr>"
-        for label, items in groups.items()
+        f'<tr><td><a href="{e(category_url(base, category))}">{e(category["label"])}</a></td>'
+        f"<td>{len(items)}</td></tr>"
+        for category, items in groups
     )
     sections = []
-    for label, items in groups.items():
+    for category, items in groups:
         lis = "\n".join(
             f'<li><a href="{e(base)}/products/{p["idx"]}/">{e(p["name"])}</a></li>'
             for p in sorted(items, key=lambda x: x["name"])
         )
         sections.append(
-            f"<h3>{e(label)} <small>({len(items)}건)</small></h3>\n"
+            f'<h3><a href="{e(category_url(base, category))}">{e(category["label"])}</a> '
+            f"<small>({len(items)}건)</small></h3>\n"
             f'<ul class="products">\n{lis}\n</ul>'
         )
 
@@ -308,7 +434,8 @@ def build_product(product: dict, cfg: dict, data: dict, org: dict, node: dict) -
         "@type": "BreadcrumbList",
         "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": cfg["siteName"], "item": f"{base}/"},
-            {"@type": "ListItem", "position": 2, "name": category["label"], "item": f"{base}/"},
+            {"@type": "ListItem", "position": 2, "name": category["label"],
+             "item": category_url(base, category)},
             {"@type": "ListItem", "position": 3, "name": product["name"], "item": url},
         ],
     }
@@ -320,7 +447,7 @@ def build_product(product: dict, cfg: dict, data: dict, org: dict, node: dict) -
         f"기준일 {data['fetchedAt']}."
     )
 
-    body = f"""<nav class="bc"><a href="{e(base)}/">{e(cfg['siteName'])}</a> &gt; {e(category['label'])}</nav>
+    body = f"""<nav class="bc"><a href="{e(base)}/">{e(cfg['siteName'])}</a> &gt; <a href="{e(category_url(base, category))}">{e(category['label'])}</a></nav>
 <main>
 <article>
 <h1>{e(product['name'])}</h1>
@@ -424,13 +551,15 @@ def build_robots(cfg: dict) -> str:
 def build_sitemap(data: dict, cfg: dict) -> str:
     base = cfg["baseUrl"]
     lastmod = data["fetchedAt"]
-    urls = [f"{base}/"] + [f"{base}/products/{p['idx']}/" for p in data["products"]]
+    categories = [category_url(base, c) for c, _ in group_by_category(data["products"])]
+    urls = [f"{base}/"] + categories + [f"{base}/products/{p['idx']}/" for p in data["products"]]
+    priority = {f"{base}/": "1.0"} | {u: "0.8" for u in categories}
     entries = "\n".join(
         "  <url>\n"
         f"    <loc>{xml_escape(u)}</loc>\n"
         f"    <lastmod>{lastmod}</lastmod>\n"
         f"    <changefreq>weekly</changefreq>\n"
-        f"    <priority>{'1.0' if u == base + '/' else '0.7'}</priority>\n"
+        f"    <priority>{priority.get(u, '0.7')}</priority>\n"
         "  </url>"
         for u in urls
     )
@@ -573,6 +702,12 @@ def main(argv: list[str] | None = None) -> int:
     ]
 
     write("index.html", build_index(data, cfg, org, dataset, nodes))
+    groups = group_by_category(data["products"])
+    for category, items in groups:
+        write(
+            f"categories/{category_slug(category)}/index.html",
+            build_category(category, items, groups, cfg, data, org),
+        )
     for product in data["products"]:
         write(
             f"products/{product['idx']}/index.html",
@@ -635,10 +770,10 @@ def main(argv: list[str] | None = None) -> int:
     active_tags = [n for n, v in meta_tags.items() if str(v).strip()]
 
     print(f"출력 루트          {out}")
-    print(f"HTML               {html_files}개 (index 1 + 상품 {html_files - 1})")
+    print(f"HTML               {html_files}개 (index 1 + 구분 {len(groups)} + 상품 {len(data['products'])})")
     print(f"JSON-LD 파일       {json_files}개 (catalog 1 + 상품 {json_files - 1})")
     print(f"설정 파일          robots.txt / sitemap.xml / llms.txt / .nojekyll / .gitattributes")
-    print(f"sitemap URL        {len(data['products']) + 1}개")
+    print(f"sitemap URL        {1 + len(groups) + len(data['products'])}개")
     if active_tags:
         print(f"소유확인 meta      {len(active_tags)}개 x 전 {html_files}페이지: {', '.join(active_tags)}")
     else:
