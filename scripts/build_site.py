@@ -164,6 +164,28 @@ def verification_meta(cfg: dict) -> str:
     )
 
 
+def open_graph(*, title: str, description: str, url: str, site_name: str) -> str:
+    """Open Graph 태그. 네이버 서치어드바이저가 og:title·og:description 부재를
+    실시간 조회에서 경고로 잡으므로 전 페이지에 넣는다 (2026-10-18 확인).
+
+    값은 <title>·description·canonical 과 동일한 것을 쓴다. 따로 관리하면
+    두 곳이 어긋나고, 어긋난 쪽이 검색 스니펫에 나간다.
+    이미지는 사이트에 없으므로 og:image 를 넣지 않는다 - 빈 값이나 깨진
+    경로를 주는 것보다 생략이 낫다.
+    """
+    tags = {
+        "og:type": "website",
+        "og:site_name": site_name,
+        "og:title": title,
+        "og:description": description,
+        "og:url": url,
+        "og:locale": "ko_KR",
+    }
+    return "".join(
+        f'\n<meta property="{e(k)}" content="{e(v)}">' for k, v in tags.items()
+    )
+
+
 def page(
     *,
     title: str,
@@ -171,6 +193,7 @@ def page(
     canonical: str,
     body: str,
     jsonld: Any,
+    site_name: str,
     alternate: str | None = None,
     extra_head: str = "",
 ) -> str:
@@ -179,13 +202,16 @@ def page(
         f'\n<link rel="alternate" type="application/ld+json" href="{e(alternate)}">'
         if alternate else ""
     )
+    og = open_graph(
+        title=title, description=description, url=canonical, site_name=site_name,
+    )
     return f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title>
-<meta name="description" content="{e(description)}">{extra_head}
+<meta name="description" content="{e(description)}">{og}{extra_head}
 <link rel="canonical" href="{e(canonical)}">{alternate_link}
 <style>{STYLE}</style>
 <script type="application/ld+json">
@@ -320,6 +346,7 @@ def build_category(
         canonical=url,
         jsonld={"@context": SCHEMA, "@graph": [org, item_list, breadcrumb]},
         body=body,
+        site_name=cfg["siteName"],
         extra_head=verification_meta(cfg),
     )
 
@@ -413,6 +440,7 @@ def build_index(data: dict, cfg: dict, org: dict, dataset: dict, nodes: dict[int
         alternate=f"{base}/data/catalog.json",
         jsonld={"@context": SCHEMA, "@graph": [org, dataset, item_list]},
         body=body,
+        site_name=cfg["siteName"],
         extra_head=verification_meta(cfg),
     )
 
@@ -495,6 +523,7 @@ def build_product(product: dict, cfg: dict, data: dict, org: dict, node: dict) -
         alternate=f"{base}/data/products/{product['idx']}.json",
         jsonld={"@context": SCHEMA, "@graph": [org, node, breadcrumb]},
         body=body,
+        site_name=cfg["siteName"],
         extra_head=verification_meta(cfg),
     )
 
