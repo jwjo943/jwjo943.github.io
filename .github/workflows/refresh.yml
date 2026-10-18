@@ -37,6 +37,11 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          # 변경 이력(/changes/)은 data/products.json 의 과거 리비전을 git 에서
+          # 읽어 만든다. 기본값 fetch-depth:1 은 커밋 1개만 가져오므로 이력이
+          # 통째로 비어버린다 (빌드는 성공하고 페이지만 빈다 - 조용히 틀린다).
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:

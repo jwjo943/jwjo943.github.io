@@ -5,9 +5,10 @@
     py scripts/build_site.py --base-url https://myaccount.github.io
 
 출력(퍼블리시 루트):
-    index.html                    상품 101건 색인
+    index.html                    전체 상품 색인
+    changes/index.html            공시 변경 이력 (주간 스냅샷 차이)
     categories/<slug>/index.html  구분(판매채널 > 상품종류) 1개의 상품 목록
-    products/<idx>/index.html     상품 1건
+    products/<idx>/index.html     상품 1건 (+ 그 상품의 변경 이력)
     data/catalog.json             전체 JSON-LD
     data/products/<idx>.json      상품별 JSON-LD
     robots.txt  sitemap.xml  llms.txt  .nojekyll
@@ -60,6 +61,7 @@ from build_jsonld import (
     product_node,
 )
 from hanwha_disclosure import LIST_PAGE
+from history import KIND_LABEL, build as build_history
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_INPUT = ROOT / "data" / "products.json"
@@ -429,6 +431,11 @@ def build_index(data: dict, cfg: dict, org: dict, dataset: dict, nodes: dict[int
 </table>
 </div>
 
+<h2>공시 변경 이력</h2>
+<p>이 사이트는 공시실을 주 1회 수집한다. 공시실에 없는
+<a href="{e(base)}/changes/">무엇이 언제 바뀌었는지</a>를 스냅샷 차이로 남긴다 —
+신규 등재, 판매중단, 판매기간 구간 변경, 공시문서 교체.</p>
+
 <h2>상품 목록</h2>
 {"".join(f"{s}\n" for s in sections)}
 </main>"""
@@ -448,7 +455,88 @@ def build_index(data: dict, cfg: dict, org: dict, dataset: dict, nodes: dict[int
 # -- 상품 페이지 ------------------------------------------------------------
 
 
-def build_product(product: dict, cfg: dict, data: dict, org: dict, node: dict) -> str:
+def change_rows(events: list[dict]) -> str:
+    """변경 이력 표의 <tr> 묶음. 상품 페이지와 /changes/ 가 같은 표기를 쓴다."""
+    rows = []
+    for ev in events:
+        detail = (f"{ev['from']} → {ev['to']}" if "from" in ev else "-")
+        rows.append(
+            f"<tr><td>{e(ev['asof'])}</td>"
+            f"<td>{e(KIND_LABEL[ev['kind']])}</td><td>{e(detail)}</td></tr>"
+        )
+    return chr(10).join(rows)
+
+
+def build_changes(history: dict, cfg: dict, data: dict, org: dict) -> str:
+    """공시 변경 이력 타임라인.
+
+    공시실은 현재 상태만 보여주므로 "언제 바뀌었는지"는 이 사이트의 스냅샷
+    차이로만 알 수 있다. 그 차이를 한 페이지에 모은다.
+    """
+    base = cfg["baseUrl"]
+    url = f"{base}/changes/"
+    timeline = history["timeline"]
+    total = sum(len(entry["events"]) for entry in timeline)
+
+    sections = []
+    for entry in timeline:
+        items = []
+        for ev in entry["events"]:
+            detail = (f" ({ev['from']} → {ev['to']})" if "from" in ev else "")
+            link = f"{base}/products/{ev['idx']}/"
+            label = e(KIND_LABEL[ev["kind"]])
+            if ev["kind"] == "removed":
+                # 목록에서 사라진 상품은 페이지도 없어졌으므로 링크하지 않는다.
+                name = e(ev["name"])
+            else:
+                name = f'<a href="{e(link)}">{e(ev["name"])}</a>'
+            items.append(f"<li><strong>{label}</strong> · {name}{e(detail)}</li>")
+        sections.append(
+            f"<h3>{e(entry['asof'])} 기준 <span class=\"meta\">"
+            f"(직전 기준일 {e(entry['prevAsof'])} · {len(entry['events'])}건)</span></h3>\n"
+            f'<ul class="products">\n{chr(10).join(items)}\n</ul>'
+        )
+
+    if not timeline:
+        sections = ["<p>아직 비교할 스냅샷이 없다. 다음 주간 갱신부터 쌓인다.</p>"]
+
+    description = (
+        f"한화생명 상품공시실 주간 스냅샷을 비교한 공시 변경 이력. "
+        f"신규·판매중단·판매기간 구간 변경·공시문서 변경 {total}건, "
+        f"스냅샷 {history['revisions']}회차. 기준일 {data['fetchedAt']}."
+    )
+
+    breadcrumb = {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": cfg["siteName"], "item": f"{base}/"},
+            {"@type": "ListItem", "position": 2, "name": "공시 변경 이력", "item": url},
+        ],
+    }
+
+    body = f"""<nav class="bc"><a href="{e(base)}/">{e(cfg['siteName'])}</a> &gt; 공시 변경 이력</nav>
+<main>
+<h1>공시 변경 이력</h1>
+<p class="meta">기준일 {e(data['fetchedAt'])} · 스냅샷 {history['revisions']}회차 · 변경 {total}건</p>
+<p>한화생명 상품공시실은 <strong>현재 상태만</strong> 공시한다. 이 페이지는 주 1회 수집한
+스냅샷을 서로 비교해 <strong>무엇이 언제 바뀌었는지</strong>를 남긴 것이다.
+판매중단 시점, 신규 등재 시점, 약관·요약서 교체 시점은 공시실 원문에서 확인할 수 없다.</p>
+{chr(10).join(sections)}
+</main>"""
+
+    return page(
+        title=f"공시 변경 이력 · {cfg['siteName']}",
+        description=description,
+        canonical=url,
+        jsonld={"@context": SCHEMA, "@graph": [org, breadcrumb]},
+        body=body,
+        site_name=cfg["siteName"],
+        extra_head=verification_meta(cfg),
+    )
+
+
+def build_product(product: dict, cfg: dict, data: dict, org: dict, node: dict,
+                  events: list[dict] | None = None) -> str:
     base = cfg["baseUrl"]
     url = f"{base}/products/{product['idx']}/"
     category = product["category"]
@@ -483,6 +571,24 @@ def build_product(product: dict, cfg: dict, data: dict, org: dict, node: dict) -
         f"기준일 {data['fetchedAt']}."
     )
 
+    # 변경 이력이 있는 상품만 섹션을 넣는다. 빈 표는 공시실 원문보다 나을 게 없다.
+    change_section = ""
+    if events:
+        change_section = f"""
+<h2>이 상품의 변경 이력</h2>
+<p class="meta">공시실 스냅샷을 주 1회 비교해 기록한 것이다. 공시실 원문에는 없는 정보다.</p>
+<div class="wrap">
+<table>
+<caption>{e(product['name'])} 공시 변경 이력 {len(events)}건</caption>
+<thead><tr><th>기준일</th><th>변경</th><th>값</th></tr></thead>
+<tbody>
+{change_rows(events)}
+</tbody>
+</table>
+</div>
+<p><a href="{e(base)}/changes/">전체 공시 변경 이력 보기</a></p>
+"""
+
     body = f"""<nav class="bc"><a href="{e(base)}/">{e(cfg['siteName'])}</a> &gt; <a href="{e(category_url(base, category))}">{e(category['label'])}</a></nav>
 <main>
 <article>
@@ -510,7 +616,7 @@ def build_product(product: dict, cfg: dict, data: dict, org: dict, node: dict) -
 </div>
 <p class="meta">공시문서 PDF 는 한화생명 공시실에서 내려받는다. 공시실 다운로드가 POST 전용이라
 이 사이트는 직접 링크를 제공하지 않고 파일명만 싣는다.</p>
-
+{change_section}
 <h2>원문 확인</h2>
 <p><a href="{e(product['sourceUrl'])}">한화생명 상품공시실에서 이 상품 보기</a></p>
 </article>
@@ -584,8 +690,10 @@ def build_sitemap(data: dict, cfg: dict) -> str:
     base = cfg["baseUrl"]
     lastmod = data["fetchedAt"]
     categories = [category_url(base, c) for c, _ in group_by_category(data["products"])]
-    urls = [f"{base}/"] + categories + [f"{base}/products/{p['idx']}/" for p in data["products"]]
-    priority = {f"{base}/": "1.0"} | {u: "0.8" for u in categories}
+    changes = f"{base}/changes/"
+    urls = ([f"{base}/", changes] + categories
+            + [f"{base}/products/{p['idx']}/" for p in data["products"]])
+    priority = {f"{base}/": "1.0", changes: "0.9"} | {u: "0.8" for u in categories}
     entries = "\n".join(
         "  <url>\n"
         f"    <loc>{xml_escape(u)}</loc>\n"
@@ -628,6 +736,7 @@ def build_llms_txt(data: dict, cfg: dict) -> str:
         "## 기계 판독용",
         "",
         f"- [전체 JSON-LD 카탈로그]({base}/data/catalog.json): schema.org FinancialProduct {counts['products']}건",
+        f"- [공시 변경 이력]({base}/changes/): 주간 스냅샷 차이. 공시실 원문에 없는 정보다",
         f"- [sitemap.xml]({base}/sitemap.xml)",
         "",
     ]
@@ -736,7 +845,12 @@ def main(argv: list[str] | None = None) -> int:
         for p in data["products"]
     ]
 
+    # 공시 변경 이력. git 이력이 얕으면 빈 상태로 돌아오고, 그때는
+    # /changes/ 가 "쌓이는 중" 문구만 담는다 (빌드는 실패하지 않는다).
+    history = build_history(current=data)
+
     write("index.html", build_index(data, cfg, org, dataset, nodes))
+    write("changes/index.html", build_changes(history, cfg, data, org))
     groups = group_by_category(data["products"])
     for category, items in groups:
         write(
@@ -746,7 +860,8 @@ def main(argv: list[str] | None = None) -> int:
     for product in data["products"]:
         write(
             f"products/{product['idx']}/index.html",
-            build_product(product, cfg, data, org, nodes[product["idx"]]),
+            build_product(product, cfg, data, org, nodes[product["idx"]],
+                          events=history["byProduct"].get(product["idx"])),
         )
 
     catalog = {
@@ -805,10 +920,12 @@ def main(argv: list[str] | None = None) -> int:
     active_tags = [n for n, v in meta_tags.items() if str(v).strip()]
 
     print(f"출력 루트          {out}")
-    print(f"HTML               {html_files}개 (index 1 + 구분 {len(groups)} + 상품 {len(data['products'])})")
+    print(f"HTML               {html_files}개 (index 1 + changes 1 + 구분 {len(groups)} + 상품 {len(data['products'])})")
+    print(f"변경 이력          스냅샷 {history['revisions']}회차 / 변경 회차 {len(history['timeline'])} / "
+          f"이력 있는 상품 {len(history['byProduct'])}건")
     print(f"JSON-LD 파일       {json_files}개 (catalog 1 + 상품 {json_files - 1})")
     print(f"설정 파일          robots.txt / sitemap.xml / llms.txt / .nojekyll / .gitattributes")
-    print(f"sitemap URL        {1 + len(groups) + len(data['products'])}개")
+    print(f"sitemap URL        {2 + len(groups) + len(data['products'])}개")
     if active_tags:
         print(f"소유확인 meta      {len(active_tags)}개 x 전 {html_files}페이지: {', '.join(active_tags)}")
     else:
