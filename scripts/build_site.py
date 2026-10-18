@@ -84,6 +84,24 @@ AI_CRAWLERS: list[tuple[str, str]] = [
 #: 학습용 수집 봇. allowTrainingCrawlers=false 면 이 토큰만 Disallow 로 뒤집는다.
 TRAINING_CRAWLERS = {"ClaudeBot", "GPTBot", "Google-Extended"}
 
+#: 국내 검색 포털 크롤러.
+#: `User-agent: *` 가 이미 Allow 라 **동작은 바뀌지 않는다.** 의도를 명시해
+#: 나중에 누가 `*` 를 Disallow 로 바꿔도 국내 검색은 살려두려는 목적이다.
+#: Googlebot 은 적지 않는다 - 전용 그룹을 만들면 그 봇은 `*` 그룹을 무시하므로
+#: 관리 지점만 늘어난다.
+SEARCH_CRAWLERS: list[tuple[str, str]] = [
+    # 네이버 공식 안내(help.naver.com)는 JS 렌더링이라 본문을 읽지 못했다.
+    # UA 문자열 `Yeti/1.1 (+https://naver.me/spd)` 의 단축링크가 네이버
+    # 웹문서 수집정책 페이지로 200 응답하는 것까지만 실측했다. (2026-10-18)
+    ("Yeti", "네이버 검색 수집 - 토큰 Yeti (공식 문서 본문 미확인)"),
+    # cs.daum.net/faq/service/15/category/4118/detail/36354 에
+    # `user-agent:Daum` / `allow: /` 예시가 그대로 있다. (2026-10-18 확인)
+    ("Daum", "다음/카카오 검색 수집 - 다음 공식 FAQ 예시 기준"),
+    # 구형 토큰. clien.net/robots.txt 가 Daum 과 Daumoa 를 함께 두고 있다.
+    ("Daumoa", "다음 구형 토큰 - 아직 쓰이므로 함께 둔다"),
+    ("ZumBot", "줌 검색 수집 (토큰 미검증)"),
+]
+
 DISCLAIMER = (
     "이 사이트는 한화생명보험 주식회사가 운영하는 공식 사이트가 아니며, "
     "한화생명 상품공시실에 공시된 내용을 색인한 비공식 자료다. "
@@ -516,7 +534,7 @@ def build_robots(cfg: dict) -> str:
         "Allow: /",
         "",
     ]
-    for token, note in AI_CRAWLERS:
+    for token, note in (*SEARCH_CRAWLERS, *AI_CRAWLERS):
         blocked = token in TRAINING_CRAWLERS and not allow_training
         lines += [
             f"# {note}",
